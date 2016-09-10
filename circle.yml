@@ -1,0 +1,9 @@
+machine:
+    services:
+        - redis
+    environment:
+        REDIS_ADDR: localhost:6379
+
+test:
+    override:
+        - make

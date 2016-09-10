@@ -1,5 +1,7 @@
 # go-dlm
 
+[![CircleCI](https://circleci.com/gh/MEDIGO/go-dlm.svg?style=shield)](https://circleci.com/gh/MEDIGO/go-dlm)
+
 This package provides an abstraction library for multiple Distributed Lock Manager backends.
 
 As the moment, go-dlm only supports [Redis](http://redis.io/) and an in-memory implementation intended to be used during development.
