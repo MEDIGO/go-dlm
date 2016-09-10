@@ -1,5 +1,6 @@
 # go-dlm
 
+[![GoDoc](https://godoc.org/github.com/MEDIGO/go-dlm?status.svg)](https://godoc.org/github.com/MEDIGO/go-dlm)
 [![CircleCI](https://circleci.com/gh/MEDIGO/go-dlm.svg?style=shield)](https://circleci.com/gh/MEDIGO/go-dlm)
 
 This package provides an abstraction library for multiple Distributed Lock Manager backends.

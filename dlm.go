@@ -1,5 +1,4 @@
-// This package provides an abstraction library for multiple Distributed Lock Manager backends.
-
+// Package dlm provides an abstraction library for multiple Distributed Lock Manager backends.
 package dlm
 
 import (
