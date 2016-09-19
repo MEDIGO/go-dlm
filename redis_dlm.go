@@ -93,7 +93,9 @@ func (l *redisLock) Lock() error {
 		return ErrLockHeld
 	}
 
-	ok, err := l.client.SetNX(l.key, l.token, l.ttl).Result()
+	key := l.namespace + l.key
+
+	ok, err := l.client.SetNX(key, l.token, l.ttl).Result()
 	if err != nil {
 		return fmt.Errorf("failed to adquire lock: %v", err)
 	}
@@ -111,7 +113,7 @@ func (l *redisLock) Lock() error {
 		case <-timeout:
 			return ErrCannotLock
 		case <-retry:
-			ok, err := l.client.SetNX(l.namespace+l.key, l.token, l.ttl).Result()
+			ok, err := l.client.SetNX(key, l.token, l.ttl).Result()
 			if err != nil {
 				return fmt.Errorf("failed to adquire lock: %v", err)
 			}
@@ -132,7 +134,9 @@ func (l *redisLock) Unlock() error {
 		return ErrLockNotHeld
 	}
 
-	n, err := l.client.Eval(redisReleaseScript, []string{l.namespace + l.key}, l.token).Result()
+	key := l.namespace + l.key
+
+	n, err := l.client.Eval(redisReleaseScript, []string{key}, l.token).Result()
 	if err != nil {
 		return fmt.Errorf("failed to release lock: %v", err)
 	}

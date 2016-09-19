@@ -6,5 +6,5 @@ lint:
 .PHONY: lint
 
 test:
-	go test .
+	go test -v .
 .PHONY: test
