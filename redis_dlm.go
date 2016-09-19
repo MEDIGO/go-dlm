@@ -18,16 +18,21 @@ const redisReleaseScript = `
 // RedisDLM is a DLM that uses Redis as a backend. The implementation is based in
 // the single node algorithm described here: http://redis.io/topics/distlock
 type RedisDLM struct {
-	client *redis.Client
+	client    *redis.Client
+	namespace string
 }
 
 // NewRedisDLM creates a new RedisDLM.
-func NewRedisDLM(addr string) (DLM, error) {
+func NewRedisDLM(addr string, opts *Options) (DLM, error) {
+	if opts == nil {
+		opts = &Options{}
+	}
+
 	client := redis.NewClient(&redis.Options{
 		Addr: addr,
 	})
 
-	return &RedisDLM{client}, nil
+	return &RedisDLM{client, opts.Namespace}, nil
 }
 
 // NewLock creates a lock for the given key. The returned lock is not held
@@ -49,6 +54,7 @@ func (d *RedisDLM) NewLock(key string, opts *LockOptions) (Locker, error) {
 		waitTime:  opts.WaitTime,
 		retryTime: opts.RetryTime,
 		client:    d.client,
+		namespace: d.namespace,
 		key:       key,
 		token:     token,
 	}
@@ -65,9 +71,18 @@ type redisLock struct {
 	waitTime  time.Duration
 	retryTime time.Duration
 
-	key    string
-	token  string // A random string used to safely release the lock
-	isHeld bool
+	namespace string
+	key       string
+	token     string // A random string used to safely release the lock
+	isHeld    bool
+}
+
+func (l *redisLock) Key() string {
+	return l.key
+}
+
+func (l *redisLock) Namespace() string {
+	return l.namespace
 }
 
 func (l *redisLock) Lock() error {
@@ -96,7 +111,7 @@ func (l *redisLock) Lock() error {
 		case <-timeout:
 			return ErrCannotLock
 		case <-retry:
-			ok, err := l.client.SetNX(l.key, l.token, l.ttl).Result()
+			ok, err := l.client.SetNX(l.namespace+l.key, l.token, l.ttl).Result()
 			if err != nil {
 				return fmt.Errorf("failed to adquire lock: %v", err)
 			}
@@ -117,7 +132,7 @@ func (l *redisLock) Unlock() error {
 		return ErrLockNotHeld
 	}
 
-	n, err := l.client.Eval(redisReleaseScript, []string{l.key}, l.token).Result()
+	n, err := l.client.Eval(redisReleaseScript, []string{l.namespace + l.key}, l.token).Result()
 	if err != nil {
 		return fmt.Errorf("failed to release lock: %v", err)
 	}

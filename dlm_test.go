@@ -12,6 +12,14 @@ func RunDLMLockTest(t *testing.T, dlm DLM) {
 	lockA, err := dlm.NewLock("dlm-lock-test", nil)
 	require.NoError(t, err)
 
+	// it should return the key
+	key := lockA.Key()
+	require.Equal(t, "dlm-lock-test", key)
+
+	// it should return the namespace
+	namespace := lockA.Namespace()
+	require.Equal(t, "test/", namespace)
+
 	// it should adquire the lock
 	err = lockA.Lock()
 	require.NoError(t, err)

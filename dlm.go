@@ -39,6 +39,11 @@ type DLM interface {
 	NewLock(string, *LockOptions) (Locker, error)
 }
 
+// Options parameterizes a DLM.
+type Options struct {
+	Namespace string // Optional namespace prefixed to each lock key.
+}
+
 // LockOptions parameterizes a lock.
 type LockOptions struct {
 	TTL       time.Duration // Optional, defaults to DefaultTTL
@@ -65,6 +70,13 @@ func (lo *LockOptions) WithDefaults() *LockOptions {
 
 // Locker describes a lock that can be locked or unlocked.
 type Locker interface {
+	// Key returns the key to be locked.
+	Key() string
+
+	// Namespace returns the the prefix to be added to the key. If there is not a namespace,
+	// it returns the empty string.
+	Namespace() string
+
 	// Lock adquires the lock. It fails with error if the lock is already held.
 	Lock() error
 

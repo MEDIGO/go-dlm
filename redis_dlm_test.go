@@ -12,7 +12,9 @@ func TestRedisDLMLock(t *testing.T) {
 		t.SkipNow()
 	}
 
-	dlm, err := NewRedisDLM(os.Getenv("REDIS_ADDR"))
+	dlm, err := NewRedisDLM(os.Getenv("REDIS_ADDR"), &Options{
+		Namespace: "test/",
+	})
 	require.NoError(t, err)
 
 	RunDLMLockTest(t, dlm)
