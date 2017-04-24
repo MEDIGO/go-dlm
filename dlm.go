@@ -12,30 +12,30 @@ const (
 	// DefaultTTL is the TTL of the lock after wich it will be automatically released.
 	DefaultTTL = 15 * time.Second
 
-	// DefaultWaitTime is how long will we wait to adquire a lock.
+	// DefaultWaitTime is how long will we wait to acquire a lock.
 	DefaultWaitTime = 15 * time.Second
 
 	// DefaultRetryTime is how long will we wait after a failed lock adquisition
-	// before attempting to adquire the lock again.
+	// before attempting to acquire the lock again.
 	DefaultRetryTime = 5 * time.Second
 )
 
 var (
-	// ErrLockHeld is returned if we attempt to adquire a lock that is already held.
+	// ErrLockHeld is returned if we attempt to acquire a lock that is already held.
 	ErrLockHeld = fmt.Errorf("lock already held")
 
 	// ErrLockNotHeld is returned if we attempt to release a lock that is not held.
 	ErrLockNotHeld = fmt.Errorf("lock not held")
 
-	// ErrCannotLock is returned when it's not possible to adquire the lock before
+	// ErrCannotLock is returned when it's not possible to acquire the lock before
 	// the configured wait time ends.
-	ErrCannotLock = fmt.Errorf("cannot adquire lock")
+	ErrCannotLock = fmt.Errorf("cannot acquire lock")
 )
 
 // DLM describes a Distributed Lock Manager.
 type DLM interface {
 	// NewLock creates a lock for the given key. The returned lock is not held
-	// and must be adquired with a call to .Lock.
+	// and must be acquired with a call to .Lock.
 	NewLock(string, *LockOptions) (Locker, error)
 }
 
@@ -77,7 +77,7 @@ type Locker interface {
 	// it returns the empty string.
 	Namespace() string
 
-	// Lock adquires the lock. It fails with error if the lock is already held.
+	// Lock acquires the lock. It fails with error if the lock is already held.
 	Lock() error
 
 	// Unlock releases the lock. It fails with error if the lock is not currently held.

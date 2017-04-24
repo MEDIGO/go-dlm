@@ -24,7 +24,7 @@ func NewInMemDLM(opts *Options) DLM {
 }
 
 // NewLock creates a lock for the given key. The returned lock is not held
-// and must be adquired with a call to .Lock.
+// and must be acquired with a call to .Lock.
 func (d *InMemDLM) NewLock(key string, opts *LockOptions) (Locker, error) {
 	if opts == nil {
 		opts = &LockOptions{}
@@ -50,7 +50,7 @@ func (d *InMemDLM) NewLock(key string, opts *LockOptions) (Locker, error) {
 	return &lock, nil
 }
 
-func (d *InMemDLM) adquire(key, token string, ttl time.Duration) bool {
+func (d *InMemDLM) acquire(key, token string, ttl time.Duration) bool {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
@@ -119,7 +119,7 @@ func (l *inMemLock) Lock() error {
 		return ErrLockHeld
 	}
 
-	if l.dlm.adquire(l.key, l.token, l.ttl) {
+	if l.dlm.acquire(l.key, l.token, l.ttl) {
 		l.isHeld = true
 		return nil
 	}
@@ -132,7 +132,7 @@ func (l *inMemLock) Lock() error {
 		case <-timeout:
 			return ErrCannotLock
 		case <-retry:
-			if l.dlm.adquire(l.key, l.token, l.ttl) {
+			if l.dlm.acquire(l.key, l.token, l.ttl) {
 				l.isHeld = true
 				return nil
 			}

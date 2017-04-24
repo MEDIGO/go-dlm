@@ -20,11 +20,11 @@ func RunDLMLockTest(t *testing.T, dlm DLM) {
 	namespace := lockA.Namespace()
 	require.Equal(t, "test/", namespace)
 
-	// it should adquire the lock
+	// it should acquire the lock
 	err = lockA.Lock()
 	require.NoError(t, err)
 
-	// it should fail to adquire the lock twice
+	// it should fail to acquire the lock twice
 	err = lockA.Lock()
 	require.Equal(t, ErrLockHeld, err)
 
@@ -36,7 +36,7 @@ func RunDLMLockTest(t *testing.T, dlm DLM) {
 	err = lockA.Unlock()
 	require.Equal(t, ErrLockNotHeld, err)
 
-	// it should adquire the lock again
+	// it should acquire the lock again
 	err = lockA.Lock()
 	require.NoError(t, err)
 
@@ -70,7 +70,7 @@ func RunDLMLockTTLTest(t *testing.T, dlm DLM) {
 	})
 	require.NoError(t, err)
 
-	// it should adquire the lock
+	// it should acquire the lock
 	err = lockA.Lock()
 	require.NoError(t, err)
 
@@ -103,7 +103,7 @@ func RunDLMLockWaitTimeTest(t *testing.T, dlm DLM) {
 	lockA, err := dlm.NewLock("dlm-lock-wait-time-test", nil)
 	require.NoError(t, err)
 
-	// it should adquire the lock
+	// it should acquire the lock
 	err = lockA.Lock()
 	require.NoError(t, err)
 

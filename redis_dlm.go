@@ -36,7 +36,7 @@ func NewRedisDLM(addr string, opts *Options) (DLM, error) {
 }
 
 // NewLock creates a lock for the given key. The returned lock is not held
-// and must be adquired with a call to .Lock.
+// and must be acquired with a call to .Lock.
 func (d *RedisDLM) NewLock(key string, opts *LockOptions) (Locker, error) {
 	if opts == nil {
 		opts = &LockOptions{}
@@ -97,7 +97,7 @@ func (l *redisLock) Lock() error {
 
 	ok, err := l.client.SetNX(key, l.token, l.ttl).Result()
 	if err != nil {
-		return fmt.Errorf("failed to adquire lock: %v", err)
+		return fmt.Errorf("failed to acquire lock: %v", err)
 	}
 
 	if ok {
@@ -115,7 +115,7 @@ func (l *redisLock) Lock() error {
 		case <-retry:
 			ok, err := l.client.SetNX(key, l.token, l.ttl).Result()
 			if err != nil {
-				return fmt.Errorf("failed to adquire lock: %v", err)
+				return fmt.Errorf("failed to acquire lock: %v", err)
 			}
 
 			if ok {

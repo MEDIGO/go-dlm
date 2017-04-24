@@ -23,7 +23,7 @@ if err != nil {
     panic(err)
 }
 
-// Adquire the lock
+// Acquire the lock
 if err := lock.Lock(); err != nil {
     panic(err)
 }
