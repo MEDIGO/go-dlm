@@ -29,7 +29,7 @@ var (
 
 	// ErrCannotLock is returned when it's not possible to acquire the lock before
 	// the configured wait time ends.
-	ErrCannotLock = fmt.Errorf("cannot acquire lock")
+	ErrCannotLock = fmt.Errorf("timeout while trying to acquire lock")
 )
 
 // DLM describes a Distributed Lock Manager.
