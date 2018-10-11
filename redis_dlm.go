@@ -105,21 +105,24 @@ func (l *redisLock) Lock() error {
 		return nil
 	}
 
-	timeout := time.After(l.waitTime)
-	retry := time.Tick(l.retryTime)
+	timeout := time.NewTimer(l.waitTime)
+	retry := time.NewTicker(l.retryTime)
+	defer retry.Stop()
 
 	for {
 		select {
-		case <-timeout:
+		case <-timeout.C:
 			return ErrCannotLock
-		case <-retry:
+		case <-retry.C:
 			ok, err := l.client.SetNX(key, l.token, l.ttl).Result()
 			if err != nil {
+				timeout.Stop()
 				return fmt.Errorf("failed to acquire lock: %v", err)
 			}
 
 			if ok {
 				l.isHeld = true
+				timeout.Stop()
 				return nil
 			}
 		}

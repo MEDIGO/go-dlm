@@ -124,16 +124,18 @@ func (l *inMemLock) Lock() error {
 		return nil
 	}
 
-	timeout := time.After(l.waitTime)
-	retry := time.Tick(l.retryTime)
+	timeout := time.NewTimer(l.waitTime)
+	retry := time.NewTicker(l.retryTime)
+	defer retry.Stop()
 
 	for {
 		select {
-		case <-timeout:
+		case <-timeout.C:
 			return ErrCannotLock
-		case <-retry:
+		case <-retry.C:
 			if l.dlm.acquire(l.key, l.token, l.ttl) {
 				l.isHeld = true
+				timeout.Stop()
 				return nil
 			}
 		}
